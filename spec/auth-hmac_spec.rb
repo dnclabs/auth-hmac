@@ -9,7 +9,6 @@ require 'action_controller'
 require 'action_controller/test_process'
 require 'active_resource'
 require 'active_resource/http_mock'
-require 'ruby-debug'
 
 # Class for doing a custom signature
 class CustomSignature < String
@@ -241,7 +240,7 @@ describe AuthHMAC do
       rack_req.stub!(:env).and_return(headers)
       rack_req.stub!(:request_method).and_return('GET')
       rack_req.stub!(:path).and_return("/path/to/get?foo=bar&bar=foo")
-      # debugger
+      rack_req.stub!(:[]).and_return({'foo' => 'bar', 'bar' => 'foo'})
       @authhmac.authenticated?(rack_req).should be_true
     end
   end

@@ -33,8 +33,6 @@ class AuthHMAC
     def headers(request)
       if request.respond_to?(:headers)
         request.headers
-      elsif request.respond_to?(:[])
-        request
       elsif request.respond_to?(:env)
         request.env.each_pair do |key,value|
           if value.is_a?(Array) && value.size == 1
@@ -42,6 +40,8 @@ class AuthHMAC
           end
         end
         request.env
+      elsif request.respond_to?(:[])
+        request
       else
         raise ArgumentError, "Don't know how to get the headers from #{request.inspect}"
       end
