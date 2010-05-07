@@ -67,10 +67,10 @@ class AuthHMAC
   class CanonicalString < String # :nodoc:
     include Headers
     
-    def initialize(request)
+    def initialize(request, authenticate_referrer)
       self << request_method(request) + "\n"
       self << header_values(headers(request)) + "\n"
-      self << request_path(request)
+      self << request_path(request, authenticate_referrer)
     end
     
     private
@@ -105,12 +105,17 @@ class AuthHMAC
         find_header(%w(CONTENT-MD5 CONTENT_MD5), headers)
       end
       
-      def request_path(request)
-        # Try unparsed_uri in case it is a Webrick request
-        path = if request.respond_to?(:unparsed_uri)
-          request.unparsed_uri
+      def request_path(request, authenticate_referrer)
+        if authenticate_referrer
+          headers(request)['Referer'] =~ /^(?:http:\/\/)?[^\/]*(\/.*)$/
+          path = $1
         else
-          request.path
+          # Try unparsed_uri in case it is a Webrick request
+          path = if request.respond_to?(:unparsed_uri)
+            request.unparsed_uri
+          else
+            request.path
+          end
         end
         
         path[/^[^?]*/]
@@ -142,13 +147,15 @@ class AuthHMAC
     # Defaults
     @service_id = self.class.name
     @signature_class = @@default_signature_class
+    @authenticate_referrer = false
 
     unless options.nil?
       @service_id = options[:service_id] if options.key?(:service_id)
       @signature_class = options[:signature] if options.key?(:signature) && options[:signature].is_a?(Class)
+      @authenticate_referrer = options[:authenticate_referrer] || options[:authenticate_referer]
     end
     
-    @signature_method = lambda { |r| @signature_class.send(:new, r) }
+    @signature_method = lambda { |r,ar| @signature_class.send(:new, r, ar) }
   end
 
   # Generates canonical signing string for given request
@@ -224,11 +231,11 @@ class AuthHMAC
 
   def signature(request, secret)
     digest = OpenSSL::Digest::Digest.new('sha1')
-    Base64.encode64(OpenSSL::HMAC.digest(digest, secret, canonical_string(request))).strip
+    Base64.encode64(OpenSSL::HMAC.digest(digest, secret, canonical_string(request, @authenticate_referrer))).strip
   end
 
-  def canonical_string(request)
-    @signature_method.call(request)
+  def canonical_string(request, authenticate_referrer=false)
+    @signature_method.call(request, authenticate_referrer)
   end
   
   def authorization_header(request)
