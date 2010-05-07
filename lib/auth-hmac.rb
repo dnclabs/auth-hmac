@@ -35,6 +35,13 @@ class AuthHMAC
         request.headers
       elsif request.respond_to?(:[])
         request
+      elsif request.respond_to?(:env)
+        request.env.each_pair do |key,value|
+          if value.is_a?(Array) && value.size == 1
+            request.env[key] = value[0]
+          end
+        end
+        request.env
       else
         raise ArgumentError, "Don't know how to get the headers from #{request.inspect}"
       end
