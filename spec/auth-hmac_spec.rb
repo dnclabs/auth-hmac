@@ -9,10 +9,11 @@ require 'action_controller'
 require 'action_controller/test_process'
 require 'active_resource'
 require 'active_resource/http_mock'
+require 'ruby-debug'
 
 # Class for doing a custom signature
 class CustomSignature < String
-  def initialize(request)
+  def initialize(request, authenticate_referrer=false)
     self << "Custom signature string: #{request.method}"
   end
 end
@@ -65,6 +66,7 @@ describe AuthHMAC do
         :service_id => 'MyService',
         :signature => CustomSignature
       }
+      # debugger
       AuthHMAC.sign!(@request, "my-key-id", "secret", options)
       @request['Authorization'].should == "MyService my-key-id:/L4N1v1BZSHfAYkQjsvZn696D9c="
     end
