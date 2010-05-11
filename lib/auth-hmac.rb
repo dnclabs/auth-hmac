@@ -74,7 +74,7 @@ class AuthHMAC
   class CanonicalString < String # :nodoc:
     include Headers
     
-    def initialize(request, authenticate_referrer)
+    def initialize(request, authenticate_referrer=false)
       self << request_method(request) + "\n"
       self << header_values(headers(request)) + "\n"
       self << request_path(request, authenticate_referrer)
