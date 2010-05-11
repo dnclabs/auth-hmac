@@ -208,7 +208,11 @@ class AuthHMAC
   def sign!(request, access_key_id)
     secret = @credential_store[access_key_id]
     raise ArgumentError, "No secret found for key id '#{access_key_id}'" if secret.nil?
-    request['Authorization'] = authorization(request, access_key_id, secret)
+    if request.respond_to?(:headers)
+      request.headers['Authorization'] = authorization(request, access_key_id, secret)
+    else
+      request['Authorization'] = authorization(request, access_key_id, secret)
+    end
   end
   
   # Authenticates a request using HMAC
