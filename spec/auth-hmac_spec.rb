@@ -226,6 +226,25 @@ describe AuthHMAC do
     end
   end
   
+  describe AuthHMAC::Headers do
+    before(:each) do
+      @authhmac = AuthHMAC.new(YAML.load(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'credentials.yml'))))
+    end
+    
+    it "should support Rack::Request objects" do
+      rack_req = mock("MockRackRequest")
+      headers = {
+        'HTTP_AUTHORIZATION' => ["AuthHMAC access key 1:ovwO0OBERuF3/uR3aowaUCkFMiE="],
+        'HTTP_DATE' => ['Thu, 10 Jul 2008 03:29:56 GMT']
+      }
+      rack_req.stub!(:env).and_return(headers)
+      rack_req.stub!(:request_method).and_return('GET')
+      rack_req.stub!(:path).and_return("/path/to/get?foo=bar&bar=foo")
+      rack_req.stub!(:[]).and_return({'foo' => 'bar', 'bar' => 'foo'})
+      @authhmac.authenticated?(rack_req).should be_true
+    end
+  end
+  
   describe AuthHMAC::CanonicalString do
     it "should include the http verb when it is GET" do
       request = Net::HTTP::Get.new("/")
