@@ -4,6 +4,6 @@ class AuthHMAC
     MINOR = 1
     TINY  = 1
 
-    STRING = [MAJOR, MINOR, TINY].join('.')
+    STRING = [MAJOR, MINOR, TINY, "dnc"].join('.')
   end
 end
