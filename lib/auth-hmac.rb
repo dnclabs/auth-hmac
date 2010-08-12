@@ -76,7 +76,7 @@ class AuthHMAC
     
     def initialize(request, authenticate_referrer=false)
       self << request_method(request) + "\n"
-      self << header_values(headers(request)) + "\n"
+      self << header_values(headers(request, request.body)) + "\n "#this will probably break some uses of auth outside of httparty... oh well
       self << request_path(request, authenticate_referrer)
     end
     
@@ -93,9 +93,9 @@ class AuthHMAC
         end
       end
       
-      def header_values(headers)
+      def header_values(headers, body)
         [ content_type(headers),
-          content_md5(headers),
+          (Digest::MD5.hexdigest(body) unless body.blank?), 
           (date(headers) or headers['Date'] = Time.now.utc.httpdate)
         ].join("\n")
       end

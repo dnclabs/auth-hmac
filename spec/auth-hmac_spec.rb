@@ -11,6 +11,8 @@ require 'active_resource'
 require 'active_resource/http_mock'
 require 'ruby-debug'
 
+require 'digest/md5'
+
 # Class for doing a custom signature
 class CustomSignature < String
   def initialize(request, authenticate_referrer=false)
