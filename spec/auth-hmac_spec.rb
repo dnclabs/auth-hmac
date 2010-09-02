@@ -243,6 +243,7 @@ describe AuthHMAC do
       rack_req.stub!(:request_method).and_return('GET')
       rack_req.stub!(:path).and_return("/path/to/get?foo=bar&bar=foo")
       rack_req.stub!(:[]).and_return({'foo' => 'bar', 'bar' => 'foo'})
+      rack_req.stub!(:body).and_return('')
       @authhmac.authenticated?(rack_req).should be_true
     end
   end
@@ -276,6 +277,18 @@ describe AuthHMAC do
     it "should include the content-md5 even if the case is messed up" do
       request = Net::HTTP::Put.new("/", {'content-md5' => 'adsada'})
       AuthHMAC::CanonicalString.new(request).should match(/adsada/)
+    end
+
+    it "should generate the content-md5 if one wasn't included and there is a request body" do
+      request = Net::HTTP::Put.new("/")
+      request.body = "foo=bar&baz=qux"
+      content_md5 = OpenSSL::Digest::MD5.hexdigest(request.body)
+      AuthHMAC::CanonicalString.new(request).should match(/#{content_md5}/)
+    end
+
+    it "should not generate a content-md5 when there is no request body" do
+      request = Net::HTTP::Get.new("/")
+      AuthHMAC::CanonicalString.new(request).should match(/^GET\n\n\n/)
     end
     
     it "should include the date" do

@@ -76,7 +76,7 @@ class AuthHMAC
     
     def initialize(request, authenticate_referrer=false)
       self << request_method(request) + "\n"
-      self << header_values(headers(request)) + "\n"
+      self << header_values(request) + "\n"
       self << request_path(request, authenticate_referrer)
     end
     
@@ -93,9 +93,10 @@ class AuthHMAC
         end
       end
       
-      def header_values(headers)
+      def header_values(request)
+        headers = headers(request)
         [ content_type(headers),
-          content_md5(headers),
+          (content_md5(headers) or (request.body.blank? ? '' : headers['Content-MD5'] = generate_content_md5(request))),
           (date(headers) or headers['Date'] = Time.now.utc.httpdate)
         ].join("\n")
       end
@@ -109,7 +110,11 @@ class AuthHMAC
       end
       
       def content_md5(headers)
-        find_header(%w(CONTENT-MD5 CONTENT_MD5), headers)
+        find_header(%w(CONTENT-MD5 CONTENT_MD5 HTTP_CONTENT_MD5), headers)
+      end
+
+      def generate_content_md5(request)
+        OpenSSL::Digest::MD5.hexdigest(request.body)
       end
       
       def request_path(request, authenticate_referrer)
