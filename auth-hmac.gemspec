@@ -1,26 +1,18 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{auth-hmac}
-  s.version = "1.1.0"
+  s.name = %q{dnclabs-auth-hmac}
+  s.version = "1.1.1.2010090201"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Sean Geoghegan", "ascarter"]
-  s.date = %q{2009-02-26}
-  s.description = %q{A gem providing HMAC based authentication for HTTP}
-  s.email = %q{seangeo@gmail.com}
+  s.authors = ["Sean Geoghegan", "ascarter", "Wes Morgan", "Adrian Cushman"]
+  s.date = %q{2010-09-02}
+  s.description = %q{A gem providing HMAC based authentication for HTTP. This is the DNC Labs fork.}
+  s.email = %q{innovationlab@dnc.org}
   s.extra_rdoc_files = ["History.txt", "License.txt", "Manifest.txt", "PostInstall.txt", "README.txt"]
   s.files = ["History.txt", "License.txt", "Manifest.txt", "PostInstall.txt", "README.txt", "Rakefile", "config/hoe.rb", "config/requirements.rb", "lib/auth-hmac.rb", "lib/auth-hmac/version.rb", "script/console", "script/destroy", "script/generate", "setup.rb", "spec/auth-hmac_spec.rb", "spec/spec.opts", "spec/spec_helper.rb", "tasks/deployment.rake", "tasks/environment.rake", "tasks/rspec.rake", "tasks/website.rake"]
   s.has_rdoc = true
-  s.homepage = %q{http://auth-hmac.rubyforge.org}
-  s.post_install_message = %q{
-For more information on auth-hmac, see http://auth-hmac.rubyforge.org
-
-NOTE: Change this information in PostInstall.txt 
-You can also delete it if you don't want it.
-
-
-}
+  s.homepage = %q{http://github.com/dnclabs/auth-hmac/}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{auth-hmac}
