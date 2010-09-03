@@ -36,7 +36,7 @@ AuthHMAC.sign! takes a HTTP request object, an access id and a secret key and si
 * The secret key is the shared secret between the client and the server.  You should make this sufficiently random so that is can't be guessed or exposed to dictionary attacks. The follow code will give you a pretty good secret key:
 
 	random = File.read('/dev/random', 512)
-	secret_key = Base64.encode64(Digest::SHA2.new(512).digest(random))
+	secret_key = [Digest::SHA2.new(512).digest(random)].pack('m')
 	
 On the server side you can then authenticate these requests using the AuthHMAC.authenticated? method. This takes the same arguments as the sign! method but returns true if the request has been signed with the access id and secret	or false if it hasn't.
 
@@ -82,25 +82,23 @@ Using these details it is possible to build code that will sign and authenticate
 
 == INSTALL:
 
-* sudo gem install auth-hmac
+* sudo gem install dnclabs-auth-hmac
 
 == Source Code
 
-The source repository is accessible via GitHub or Ruby Forge:
+The source repository is accessible via GitHub:
 
-  git clone git://github.com/seangeo/auth-hmac.git
-
-
-  git clone git://rubyforge.org/auth-hmac.git
+  git clone git://github.com/dnclabs/auth-hmac.git
 
 == Contact Information
 
-The project page is at http://rubyforge.org/projects/auth-hmac. Please file any bugs or feedback
-using the trackers and forums there.
+Please file any bugs or feedback on http://github.com/dnclabs/auth-hmac/
 
 == Authors and Contributors
 
-rAtom was developed by Peerworks[http://peerworks.org] and written by Sean Geoghegan.
+Upstream credits: rAtom was developed by Peerworks[http://peerworks.org] and written by Sean Geoghegan.
+
+This fork: Maintained by the Democratic National Committee Innovation Labs team.
 
 == LICENSE:
 
