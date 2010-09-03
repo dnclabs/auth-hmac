@@ -7,7 +7,6 @@ $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 require 'openssl'
-require 'base64'
 
 # This module provides a HMAC Authentication method for HTTP requests. It should work with
 # net/http request classes and CGIRequest classes and hence Rails.
@@ -247,7 +246,7 @@ class AuthHMAC
 
   def signature(request, secret)
     digest = OpenSSL::Digest::Digest.new('sha1')
-    Base64.encode64(OpenSSL::HMAC.digest(digest, secret, canonical_string(request, @authenticate_referrer))).strip
+    [OpenSSL::HMAC.digest(digest, secret, canonical_string(request, @authenticate_referrer))].pack('m').strip
   end
 
   def canonical_string(request, authenticate_referrer=false)
