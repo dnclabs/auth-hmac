@@ -108,8 +108,8 @@ class AuthHMAC
 
       def read_body
         if request.body.respond_to?(:read)
-          request.body.rewind
           request.body.read
+          request.body.rewind
         else
           request.body
         end
