@@ -101,7 +101,7 @@ class AuthHMAC
       
       def header_values
         [ content_type,
-          (content_md5 or (read_body.nil? || read_body.empty? ? '' : headers['Content-MD5'] = generate_content_md5)),
+          (content_md5 or generated_md5),
           (date or headers['Date'] = Time.now.utc.httpdate)
         ].join("\n")
       end
@@ -125,6 +125,14 @@ class AuthHMAC
       
       def content_md5
         find_header(%w(CONTENT-MD5 CONTENT_MD5 HTTP_CONTENT_MD5), headers)
+      end
+
+      def generated_md5
+        if read_body.nil? || read_body.empty?
+          ''
+        else
+          headers['Content-MD5'] = generate_content_md5
+        end
       end
 
       def generate_content_md5
