@@ -192,6 +192,8 @@ class AuthHMAC
     @signature_method = lambda { |r,ar| @signature_class.send(:new, r, ar) }
   end
 
+  attr_reader :service_id
+
   # Generates canonical signing string for given request
   #
   # Supports same options as AuthHMAC.initialize for overriding service_id and
