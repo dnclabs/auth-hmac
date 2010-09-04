@@ -2,14 +2,8 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 require "net/http"
 require 'time'
 require 'yaml'
-require 'rubygems'
-gem 'actionpack'
-gem 'activeresource'
-require 'action_controller'
-require 'action_controller/test_process'
-require 'active_resource'
-require 'active_resource/http_mock'
 require 'ruby-debug'
+require 'active_support/core_ext/hash/except'
 
 # Class for doing a custom signature
 class CustomSignature < String
