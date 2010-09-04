@@ -237,7 +237,7 @@ describe AuthHMAC do
       rack_req.stub!(:request_method).and_return('GET')
       rack_req.stub!(:path).and_return("/path/to/get?foo=bar&bar=foo")
       rack_req.stub!(:[]).and_return({'foo' => 'bar', 'bar' => 'foo'})
-      rack_req.stub!(:body).and_return('')
+      rack_req.stub!(:body).and_return(StringIO.new(''))
       @authhmac.authenticated?(rack_req).should be_true
     end
   end
