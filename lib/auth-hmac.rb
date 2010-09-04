@@ -74,13 +74,20 @@ class AuthHMAC
     include Headers
     
     def initialize(request, authenticate_referrer=false)
-      self << request_method(request) + "\n"
-      self << header_values(request) + "\n"
-      self << request_path(request, authenticate_referrer)
+      @request               = request
+      @authenticate_referrer = authenticate_referrer
+      self << request_method + "\n"
+      self << header_values + "\n"
+      self << request_path
     end
-    
+    attr_reader :request, :authenticate_referrer
+
     private
-      def request_method(request)
+      def headers
+        super(@request)
+      end
+
+      def request_method
         if request.respond_to?(:request_method) && request.request_method.is_a?(String)
           request.request_method
         elsif request.respond_to?(:method) && request.method.is_a?(String)
@@ -92,15 +99,14 @@ class AuthHMAC
         end
       end
       
-      def header_values(request)
-        headers = headers(request)
-        [ content_type(headers),
-          (content_md5(headers) or (read_body(request).nil? || read_body(request).empty? ? '' : headers['Content-MD5'] = generate_content_md5(request))),
-          (date(headers) or headers['Date'] = Time.now.utc.httpdate)
+      def header_values
+        [ content_type,
+          (content_md5 or (read_body.nil? || read_body.empty? ? '' : headers['Content-MD5'] = generate_content_md5)),
+          (date or headers['Date'] = Time.now.utc.httpdate)
         ].join("\n")
       end
 
-      def read_body(request)
+      def read_body
         if request.body.respond_to?(:read)
           request.body.rewind
           request.body.read
@@ -109,25 +115,25 @@ class AuthHMAC
         end
       end
 
-      def content_type(headers)
+      def content_type
         find_header(%w(CONTENT-TYPE CONTENT_TYPE HTTP_CONTENT_TYPE), headers)
       end
       
-      def date(headers)
+      def date
         find_header(%w(DATE HTTP_DATE), headers)
       end
       
-      def content_md5(headers)
+      def content_md5
         find_header(%w(CONTENT-MD5 CONTENT_MD5 HTTP_CONTENT_MD5), headers)
       end
 
-      def generate_content_md5(request)
-        OpenSSL::Digest::MD5.hexdigest(read_body(request))
+      def generate_content_md5
+        OpenSSL::Digest::MD5.hexdigest(read_body)
       end
       
-      def request_path(request, authenticate_referrer)
+      def request_path
         if authenticate_referrer
-          headers(request)['Referer'] =~ /^(?:http:\/\/)?[^\/]*(\/.*)$/
+          headers['Referer'] =~ /^(?:http:\/\/)?[^\/]*(\/.*)$/
           path = $1
         else
           # Try unparsed_uri in case it is a Webrick request
