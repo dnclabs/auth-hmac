@@ -16,7 +16,7 @@ class AuthHMAC
         rx = Regexp.new("#{@hmac.service_id} ([^:]+):(.+)$")
 
         if md = rx.match(@hmac.authorization_header(request))
-          env["hmac-auth.access_key_id"] = md[1]
+          env["auth-hmac.access_key_id"] = md[1]
         else
           raise "Unknown request"
         end
