@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version = "1.1.1.2010090201"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Sean Geoghegan", "ascarter", "Wes Morgan", "Adrian Cushman"]
+  s.authors = ["Sean Geoghegan", "ascarter", "Wes Morgan", "Adrian Cushman", "Dave Steinberg"]
   s.date = %q{2010-09-02}
   s.description = %q{A gem providing HMAC based authentication for HTTP. This is the DNC Labs fork.}
   s.email = %q{innovationlab@dnc.org}
@@ -25,6 +25,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<hoe>, [">= 1.8.2"])
+      s.add_development_dependency(%q<rails>, ["= 2.3.8"])
+      s.add_development_dependency(%q<rspec>, ["= 1.3.1"])
+
+      if RUBY_VERSION.gsub('.','').to_i > 190
+        s.add_development_dependency(%q<ruby-debug19>)
+      else
+        s.add_development_dependency(%q<ruby-debug>)
+      end
     else
       s.add_dependency(%q<hoe>, [">= 1.8.2"])
     end
