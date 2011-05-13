@@ -286,6 +286,14 @@ describe AuthHMAC do
       AuthHMAC::CanonicalString.new(request).should match(/#{content_md5}/)
     end
 
+    it "should generate the content-md5 from a rack-compatable body object" do
+      body_str = "foo=bar&baz=qux"
+      request = Net::HTTP::Put.new("/")
+      request.body = mock("Body", :read => body_str, :rewind => nil, :to_str => body_str)
+      content_md5 = OpenSSL::Digest::MD5.hexdigest(request.body)
+      AuthHMAC::CanonicalString.new(request).should match(/#{content_md5}/)
+    end
+
     it "should not generate a content-md5 when there is no request body" do
       request = Net::HTTP::Get.new("/")
       AuthHMAC::CanonicalString.new(request).should match(/^GET\n\n\n/)
