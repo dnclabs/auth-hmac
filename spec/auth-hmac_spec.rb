@@ -286,7 +286,7 @@ describe AuthHMAC do
       AuthHMAC::CanonicalString.new(request).should match(/#{content_md5}/)
     end
 
-    it "should generate the content-md5 from a rack-compatable body object" do
+    it "should generate the content-md5 from a rack-compatible body object" do
       body_str = "foo=bar&baz=qux"
       request = Net::HTTP::Put.new("/")
       request.body = mock("Body", :read => body_str, :rewind => nil, :to_str => body_str)
