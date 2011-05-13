@@ -290,6 +290,11 @@ describe AuthHMAC do
       request = Net::HTTP::Get.new("/")
       AuthHMAC::CanonicalString.new(request).should match(/^GET\n\n\n/)
     end
+
+    it "should not generate a content-md5 when there is no request body on POST requests" do
+      request = Net::HTTP::Post.new("/")
+      AuthHMAC::CanonicalString.new(request).should match(/^POST\n\n\n/)
+    end
     
     it "should include the date" do
       date = Time.now.httpdate
