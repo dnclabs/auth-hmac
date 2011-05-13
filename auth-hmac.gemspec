@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dnclabs-auth-hmac}
-  s.version = "1.1.1.2010090201"
+  s.version = "1.1.1.2011051301"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sean Geoghegan", "ascarter", "Wes Morgan", "Adrian Cushman", "Dave Steinberg"]
