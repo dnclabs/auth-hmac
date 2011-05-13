@@ -125,9 +125,11 @@ class AuthHMAC
 
       def request_body(request)
         if request.body.respond_to? :read
-          request.body.read
+          body = request.body.read
+          request.body.rewind
+          body
         else
-          request.body
+          body = request.body
         end
       end
       
