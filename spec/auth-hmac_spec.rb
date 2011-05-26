@@ -290,8 +290,15 @@ describe AuthHMAC do
       body_str = "foo=bar&baz=qux"
       request = Net::HTTP::Put.new("/")
       request.body = mock("Body", :read => body_str, :rewind => nil, :to_str => body_str)
-      content_md5 = OpenSSL::Digest::MD5.hexdigest(request.body)
+      content_md5 = OpenSSL::Digest::MD5.hexdigest(body_str)
       AuthHMAC::CanonicalString.new(request).should match(/#{content_md5}/)
+    end
+
+    it "should not generate the content-md5 if the rack-compatible body is empty" do
+      body_str = ""
+      request = Net::HTTP::Put.new("/")
+      request.body = mock("Body", :read => body_str, :rewind => nil, :to_str => body_str)
+      AuthHMAC::CanonicalString.new(request).should match(/^PUT\n\n\n/)
     end
 
     it "should not generate a content-md5 when there is no request body" do
